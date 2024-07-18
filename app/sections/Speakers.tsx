@@ -11,7 +11,11 @@ const speakers = [
   { episode: 'Episode 1', text: 'Michael Sebastian', link: 'https://open.spotify.com/episode/1FEhy5RQbkxnd6bfuE75EL?si=67ae94381ed04524' }
 ];
 
-export default function Speakers({ setSpeakersInView }) {
+interface SpeakersProps {
+  setSpeakersInView: (inView: boolean) => void;
+}
+
+export default function Speakers({ setSpeakersInView }: SpeakersProps) {
   const { ref, inView } = useInView({
     threshold: 0.5,  // Trigger when 50% of the element is in view
     triggerOnce: false
