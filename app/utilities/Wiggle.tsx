@@ -1,7 +1,13 @@
 "use client"
+import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 
-export default function Wiggle ({ children, className }) {
+interface WiggleProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export default function Wiggle({ children, className }: WiggleProps) {
   // Define the wiggle animation as a variant
   const wiggleAnimation = {
     wiggle: {

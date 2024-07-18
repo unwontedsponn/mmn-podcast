@@ -1,8 +1,15 @@
 "use client"
+import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
-export default function FadeIn({ children, delay = 0.5, className }) {
+interface FadeInProps {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+}
+
+export default function FadeIn({ children, delay = 0.5, className }: FadeInProps) {
   const { ref, inView } = useInView({ triggerOnce: false, threshold: 0.2 });
 
   const variants = {
@@ -15,7 +22,7 @@ export default function FadeIn({ children, delay = 0.5, className }) {
 
   return (
     <motion.div
-      ref={ref}
+      ref={ref as React.Ref<HTMLDivElement>}
       variants={variants}
       initial="hidden"
       animate={inView ? 'visible' : 'hidden'}
