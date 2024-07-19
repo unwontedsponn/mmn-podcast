@@ -1,9 +1,20 @@
 "use client";
 import FadeIn from "../utilities/FadeIn";
 import { useInView } from "react-intersection-observer";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 
-export default function Contact({ setContactInView }) {
+interface ContactProps {
+  setContactInView: (inView: boolean) => void;
+}
+
+interface FormState {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+export default function Contact({ setContactInView }: ContactProps) {
   const { ref, inView } = useInView({
     threshold: 0.5,
     triggerOnce: false,
@@ -13,25 +24,25 @@ export default function Contact({ setContactInView }) {
     setContactInView(inView);
   }, [inView, setContactInView]);
 
-  const [formState, setFormState] = useState({
+  const [formState, setFormState] = useState<FormState>({
     name: '',
     email: '',
     subject: '',
     message: ''
   });
 
-  const [submissionStatus, setSubmissionStatus] = useState(null);
+  const [submissionStatus, setSubmissionStatus] = useState<string | null>(null);
 
-  const handleChange = (event) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormState({
       ...formState,
       [event.target.name]: event.target.value
     });
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-  
+
     try {
       const response = await fetch('/api/send-email', {
         method: 'POST',
@@ -40,7 +51,7 @@ export default function Contact({ setContactInView }) {
         },
         body: JSON.stringify(formState),
       });
-  
+
       if (response.ok) {
         setSubmissionStatus('Email sent successfully!');
         setFormState({
@@ -58,61 +69,67 @@ export default function Contact({ setContactInView }) {
       console.error('Error submitting form:', error);
       setSubmissionStatus('Error submitting form. Please try again.');
     }
-  };  
+  };
 
   return (
-    <div className="relative flex items-center justify-center text-white py-12 px-8 bg-cover bg-center" style={{ backgroundImage: 'url("/images/footer pic.jpg")' }} ref={ref} id="contact">
+    <div
+      className="relative flex items-center justify-center text-white py-12 px-8 bg-cover bg-center"
+      style={{ backgroundImage: 'url("/images/footer pic.jpg")' }}
+      ref={ref}
+      id="contact"
+    >
       <FadeIn className="w-full max-w-4xl p-8 bg-black bg-opacity-50 rounded-lg">
         <div className="flex flex-col items-center">
           <p className="text-lg text-red">Got other questions?</p>
           <h1 className="text-4xl font-bold mb-6">Contact Us</h1>
           <form onSubmit={handleSubmit} className="w-full max-w-lg space-y-6">
-            <input 
-              type="text" 
+            <input
+              type="text"
               name="name"
               value={formState.name}
               onChange={handleChange}
-              placeholder="Full Name" 
-              className="w-full p-3 bg-transparent border-b-2 border-white outline-none text-white placeholder-white" 
-              required 
+              placeholder="Full Name"
+              className="w-full p-3 bg-transparent border-b-2 border-white outline-none text-white placeholder-white"
+              required
             />
-            <input 
-              type="email" 
+            <input
+              type="email"
               name="email"
               value={formState.email}
               onChange={handleChange}
-              placeholder="Email" 
-              className="w-full p-3 bg-transparent border-b-2 border-white outline-none text-white placeholder-white" 
-              required 
+              placeholder="Email"
+              className="w-full p-3 bg-transparent border-b-2 border-white outline-none text-white placeholder-white"
+              required
             />
-            <input 
-              type="text" 
+            <input
+              type="text"
               name="subject"
               value={formState.subject}
               onChange={handleChange}
-              placeholder="Subject" 
-              className="w-full p-3 bg-transparent border-b-2 border-white outline-none text-white placeholder-white" 
+              placeholder="Subject"
+              className="w-full p-3 bg-transparent border-b-2 border-white outline-none text-white placeholder-white"
             />
-            <textarea 
+            <textarea
               name="message"
               value={formState.message}
               onChange={handleChange}
-              placeholder="Your Message" 
-              className="w-full p-3 bg-transparent border-b-2 border-white outline-none text-white placeholder-white" 
-              rows="4"
+              placeholder="Your Message"
+              className="w-full p-3 bg-transparent border-b-2 border-white outline-none text-white placeholder-white"
+              rows={4}
               required
             ></textarea>
-            <button 
-              type="submit" 
-              className="w-full border-2 border-white bg-red-500 hover:bg-red hover:border-red text-white font-bold py-3 px-4 transition-colors duration-200">
+            <button
+              type="submit"
+              className="w-full border-2 border-white bg-red-500 hover:bg-red hover:border-red text-white font-bold py-3 px-4 transition-colors duration-200"
+            >
               SUBMIT
             </button>
           </form>
-          {submissionStatus && (
-            <p className="mt-4 text-center">{submissionStatus}</p>
-          )}
+          {submissionStatus && <p className="mt-4 text-center">{submissionStatus}</p>}
         </div>
-        <p className="mt-8 text-center">Creator? Influencer? Entrepreneur?<br />We welcome enquiries from passionate professionals looking to collaborate.</p>
+        <p className="mt-8 text-center">
+          Creator? Influencer? Entrepreneur?<br />We welcome enquiries from passionate professionals looking to collaborate.
+        </p>
       </FadeIn>
     </div>
   );
