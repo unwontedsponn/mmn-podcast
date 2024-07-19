@@ -1,7 +1,20 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
-export async function POST(request) {
+// Define the type for the request body
+interface RequestBody {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+// Define the type for the function parameter
+interface NextRequest {
+  json: () => Promise<RequestBody>;
+}
+
+export async function POST(request: NextRequest) {
   const { name, email, subject, message } = await request.json();
 
   // Log environment variables to ensure they are being read correctly
@@ -26,7 +39,7 @@ export async function POST(request) {
   try {
     await transporter.sendMail(mailOptions);
     return NextResponse.json({ message: 'Email sent successfully' }, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error sending email:', error);
     return NextResponse.json({ message: 'Error sending email', error: error.message }, { status: 500 });
   }
