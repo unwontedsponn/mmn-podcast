@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import nodemailer from 'nodemailer';
 
 // Define the type for the request body
@@ -9,17 +9,8 @@ interface RequestBody {
   message: string;
 }
 
-// Define the type for the function parameter
-interface NextRequest {
-  json: () => Promise<RequestBody>;
-}
-
 export async function POST(request: NextRequest) {
-  const { name, email, subject, message } = await request.json();
-
-  // Log environment variables to ensure they are being read correctly
-  // console.log('EMAIL_USER:', process.env.EMAIL_USER);
-  // console.log('EMAIL_PASS:', process.env.EMAIL_PASS);
+  const { name, email, subject, message } = await request.json() as RequestBody;  
 
   let transporter = nodemailer.createTransport({
     service: 'Gmail',
